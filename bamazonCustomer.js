@@ -94,14 +94,14 @@ function menu() {
         }).then(function(savedData) {
             if (savedData.answer) {
                 var updatedQuantity = parseInt(savedData.result[0].stock_quantity) - parseInt(savedData.answer.quantity);
-                var itemId = savedData.answer.item
+                var itemId = savedData.answer.item;
+                var totalCost = parseInt(savedData.result[0].price) * parseInt(savedData.answer.quantity);
                 connection.query('UPDATE products SET ? WHERE ?', [{
                     stock_quantity: updatedQuantity
                 }, {
                     item_id: itemId
                 }], function(err, res) {
                     if (err) throw err;
-                    var totalCost = parseInt(savedData.result[0].price) * parseInt(savedData.answer.quantity);
                     console.log('Your order total cost $' + totalCost + '. Thank you for shopping with Bamazon!');
                     connection.destroy();
                 });
