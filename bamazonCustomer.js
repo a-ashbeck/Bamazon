@@ -5,7 +5,7 @@ var connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
-    password: '',
+    password: 'tedward!!!',
     database: 'bamazon_db'
 });
 
@@ -97,7 +97,8 @@ function menu() {
                 var itemId = savedData.answer.item;
                 var totalCost = parseInt(savedData.result[0].price) * parseInt(savedData.answer.quantity);
                 connection.query('UPDATE products SET ? WHERE ?', [{
-                    stock_quantity: updatedQuantity
+                    stock_quantity: updatedQuantity,
+                    product_sales: totalCost
                 }, {
                     item_id: itemId
                 }], function(err, res) {
