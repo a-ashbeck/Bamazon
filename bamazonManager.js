@@ -9,6 +9,8 @@ var connection = mysql.createConnection({
     database: 'bamazon_db'
 });
 
+var numberOfProductTypes = 0;
+
 connection.connect(function(err) {
     if (err) throw err;
     new Promise(function(resolve, reject) {
@@ -17,7 +19,11 @@ connection.connect(function(err) {
             resolve(res);
             console.log('Welcome manager!')
         });
-    }).then(function() {
+    }).then(function(result) {
+        result.forEach(function(item) {
+            numberOfProductTypes++;
+        });
+
         return enterManagerApp();
     }).catch(function(err) {
         console.log(err);
@@ -58,6 +64,7 @@ function enterManagerApp() {
 
 function logItems(result) {
     result.forEach(function(item) {
+        numberOfProductTypes++;
         console.log('Item ID: ' + item.item_id + ' || Product Name: ' + item.product_name + ' || Department: ' + item.department_name + ' || Price: ' + item.price + ' || Stock: ' + item.stock_quantity);
     });
 }
@@ -100,7 +107,7 @@ function addInventory() {
         message: 'Enter the item number of the product you would like to add stock to.',
         type: 'input',
         validate: function(value) {
-            if (isNaN(value) === false) {
+            if ((isNaN(value) === false) && (value <= numberOfProductTypes)) {
                 return true;
             } else {
                 console.log('\nPlease enter a valid item ID.');
