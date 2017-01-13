@@ -26,13 +26,3 @@ VALUES ('table', 'furniture', 100, 10),
        ('cd', 'relics', 8, 1000);
 
 SELECT * FROM products;
-
--- Departments table commands
-CREATE TABLE departments (
-  department_id INT NOT NULL AUTO_INCREMENT,
-  department_name VARCHAR(45) NOT NULL,
-  over_head_costs INT default 0,
-  total_sales INT default 0,
-  PRIMARY KEY (department_id)
-);
-

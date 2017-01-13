@@ -56,6 +56,12 @@ function enterManagerApp() {
     });
 }
 
+function logItems(result) {
+    result.forEach(function(item) {
+        console.log('Item ID: ' + item.item_id + ' || Product Name: ' + item.product_name + ' || Department: ' + item.department_name + ' || Price: ' + item.price + ' || Stock: ' + item.stock_quantity);
+    });
+}
+
 function itemsForSale() {
     return new Promise(function(resolve, reject) {
         connection.query('SELECT * FROM products', function(err, res) {
@@ -63,9 +69,7 @@ function itemsForSale() {
             resolve(res);
         });
     }).then(function(result) {
-        result.forEach(function(item) {
-            console.log('Item ID: ' + item.item_id + ' || Product Name: ' + item.product_name + ' || Department: ' +  item.department_name + ' || Price: ' + item.price + ' || Stock: ' + item.stock_quantity);
-        });
+        logItems(result);
     }).then(function() {
         enterManagerApp();
     }).catch(function(err) {
@@ -81,9 +85,7 @@ function lowInventory() {
             resolve(res);
         });
     }).then(function(result) {
-        result.forEach(function(item) {
-            console.log('Item ID: ' + item.item_id + ' || Product Name: ' + item.product_name + ' || Department: ' +  item.department_name + ' || Price: ' + item.price + ' || Stock: ' + item.stock_quantity);
-        });
+        logItems(result);
     }).then(function() {
         enterManagerApp();
     }).catch(function(err) {
@@ -119,7 +121,7 @@ function addInventory() {
         }
     }]).then(function(answer) {
         return new Promise(function(resolve, reject) {
-            connection.query('SELECT stock_quantity FROM products WHERE ?', {item_id: answer.item}, function(err, res) {
+            connection.query('SELECT stock_quantity FROM products WHERE ?', { item_id: answer.item }, function(err, res) {
                 if (err) reject(err);
                 resolve(res);
             });

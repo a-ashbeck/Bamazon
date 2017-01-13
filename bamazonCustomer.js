@@ -96,10 +96,8 @@ function menu() {
                 var updatedQuantity = parseInt(savedData.result[0].stock_quantity) - parseInt(savedData.answer.quantity);
                 var itemId = savedData.answer.item;
                 var totalCost = parseInt(savedData.result[0].price) * parseInt(savedData.answer.quantity);
-                var productSales = totalCost + parseInt(savedData.result[0].product_sales);
                 connection.query('UPDATE products SET ? WHERE ?', [{
-                    stock_quantity: updatedQuantity,
-                    product_sales: product_sales
+                    stock_quantity: updatedQuantity
                 }, {
                     item_id: itemId
                 }], function(err, res) {
