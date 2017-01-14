@@ -1,8 +1,10 @@
+-- Creates the DB
 CREATE DATABASE bamazon_DB;
 
+-- Uses the DB
 USE bamazon_DB;
 
--- Products table commands
+-- Creates the product table with variable columns
 CREATE TABLE products (
   item_id INT NOT NULL AUTO_INCREMENT,
   product_name VARCHAR(100) NOT NULL,
@@ -12,6 +14,7 @@ CREATE TABLE products (
   PRIMARY KEY (item_id)
 );
 
+-- Inserts initial data into table
 INSERT INTO products(product_name, department_name, price, stock_quantity)
 VALUES ('table', 'furniture', 100, 10),
 	     ('laptop', 'electronics', 2000, 5),
@@ -24,4 +27,5 @@ VALUES ('table', 'furniture', 100, 10),
        ('pillow', 'bedding', 15, 30),
        ('cd', 'relics', 8, 1000);
 
+-- Allows a quick view of table
 SELECT * FROM products;

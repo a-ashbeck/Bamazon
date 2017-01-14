@@ -1,6 +1,8 @@
+// Require NPM packages
 var mysql = require('mysql');
 var inquirer = require('inquirer');
 
+// Setup connection to SQL server
 var connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
@@ -9,10 +11,14 @@ var connection = mysql.createConnection({
     database: 'bamazon_db'
 });
 
+// Set counter for total number of products
 var numberOfProductTypes = 0;
 
+// Connect to DB
 connection.connect(function(err) {
+    // Throw error if it errors
     if (err) throw err;
+    // New promise that selects all data from the table
     new Promise(function(resolve, reject) {
         connection.query('SELECT * FROM products', function(err, res) {
             if (err) reject(err);
@@ -20,16 +26,19 @@ connection.connect(function(err) {
             console.log('Welcome manager!')
         });
     }).then(function(result) {
+        // increment number of products based on DB
         result.forEach(function(item) {
             numberOfProductTypes++;
         });
 
         return enterManagerApp();
+        // catch errors
     }).catch(function(err) {
         console.log(err);
     });
 });
 
+// Enter the manager prompt system
 function enterManagerApp() {
     inquirer.prompt([{
         name: 'entrance',
@@ -62,6 +71,7 @@ function enterManagerApp() {
     });
 }
 
+// Logs all items
 function logItems(result) {
     result.forEach(function(item) {
         numberOfProductTypes++;
@@ -69,6 +79,7 @@ function logItems(result) {
     });
 }
 
+// Grabs all items for sale from DB
 function itemsForSale() {
     return new Promise(function(resolve, reject) {
         connection.query('SELECT * FROM products', function(err, res) {
@@ -79,12 +90,14 @@ function itemsForSale() {
         logItems(result);
     }).then(function() {
         enterManagerApp();
+        // catch errors
     }).catch(function(err) {
         console.log(err);
         connection.destroy();
     });
 }
 
+// Grabs all items with an inventory below 5 only
 function lowInventory() {
     return new Promise(function(resolve, reject) {
         connection.query('SELECT * FROM products WHERE stock_quantity < 5', function(err, res) {
@@ -95,18 +108,21 @@ function lowInventory() {
         logItems(result);
     }).then(function() {
         enterManagerApp();
+        // catch errors
     }).catch(function(err) {
         console.log(err);
         connection.destroy();
     });
 }
 
+// Function to add inventory to SQL DB
 function addInventory() {
     return inquirer.prompt([{
         name: 'item',
         message: 'Enter the item number of the product you would like to add stock to.',
         type: 'input',
         validate: function(value) {
+            // Validator to ensure the product number is a number and it exists
             if ((isNaN(value) === false) && (value <= numberOfProductTypes)) {
                 return true;
             } else {
@@ -118,6 +134,7 @@ function addInventory() {
         name: 'quantity',
         message: 'How much stock would you like to add?',
         type: 'input',
+        // Validator to ensure it is number
         validate: function(value) {
             if (isNaN(value) === false) {
                 return true;
@@ -144,21 +161,25 @@ function addInventory() {
                 console.log('The total stock has been updated to: ' + updatedQuantity + '.');
                 enterManagerApp();
             });
+            // catch errors
         }).catch(function(err) {
             console.log(err);
             connection.destroy();
         });
+        // catch errors
     }).catch(function(err) {
         console.log(err);
         connection.destroy();
     });
 }
 
+// Function to add a new product the DB
 function addProduct() {
     return inquirer.prompt([{
         name: 'product',
         message: 'Enter the name of the product you would like to add.',
         type: 'input',
+        // Validator to ensure it is not left blank
         validate: function(value) {
             if (value === '') {
                 console.log('\nPlease enter a valid name.');
@@ -171,9 +192,10 @@ function addProduct() {
         name: 'department',
         message: 'Enter the name of the department where the product is located.',
         type: 'input',
+        // Validator to ensure it is not left blank
         validate: function(value) {
             if (value === '') {
-                console.log('\nPlease enter a valid name.');
+                console.log('\nPlease enter a valid department name.');
                 return false;
             } else {
                 return true;
@@ -183,6 +205,7 @@ function addProduct() {
         name: 'price',
         message: 'Enter the price of the product.',
         type: 'input',
+        // Validator to ensure it is a valid number
         validate: function(value) {
             if (isNaN(value) === false) {
                 return true;
@@ -196,6 +219,7 @@ function addProduct() {
         message: 'Enter the amount of initial stock quantity.',
         type: 'input',
         validate: function(value) {
+            // Validator to ensure it is a valid number
             if (isNaN(value) === false) {
                 return true;
             } else {
@@ -204,6 +228,7 @@ function addProduct() {
             }
         }
     }]).then(function(answer) {
+        // new promise to update DB
         return new Promise(function(resolve, reject) {
             connection.query('INSERT INTO products SET ?', [{
                 product_name: answer.product,
@@ -214,13 +239,16 @@ function addProduct() {
                 if (err) reject(err);
                 resolve(res);
             });
+            // log message
         }).then(function() {
             console.log('The product has been added to the inventory.');
             enterManagerApp();
+            // catch errors
         }).catch(function(err) {
             console.log(err);
             connection.destroy();
         });
+        // catch errors
     }).catch(function(err) {
         console.log(err);
         connection.destroy();
